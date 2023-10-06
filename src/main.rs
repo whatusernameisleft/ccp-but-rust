@@ -1,5 +1,5 @@
 use ccp_but_rust::customer::*;
-use ccp_but_rust::tickets::sellers::{Booth, TicketSeller};
+use ccp_but_rust::tickets::sellers::TicketSeller;
 use ccp_but_rust::tickets::*;
 
 #[tokio::main]

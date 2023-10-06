@@ -2,7 +2,7 @@ use rand::{
     distributions::{Distribution, Standard},
     Rng,
 };
-use std::{fmt, mem::Discriminant};
+use std::fmt;
 
 pub mod sellers;
 
