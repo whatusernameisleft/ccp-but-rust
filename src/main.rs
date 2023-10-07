@@ -9,19 +9,26 @@ async fn main() {
         id: 2,
         ..Default::default()
     };
-    let c3 = Customer {
+    let mut c3 = Customer {
         id: 3,
         status: Status::Passenger,
-        ticket: Some(Ticket::BukitBintang),
+        ticket: None,
     };
 
     println!("{c1} is gaming");
     println!("{c2} is gaming 2");
     println!("{c3} is gaming 3");
 
-    c1.enter_building();
+    match c1.enter_building() {
+        Ok(res) => println!("{res}"),
+        Err(err) => println!("Error entering building: {err}"),
+    }
     println!("{}", c1.get_string());
+
     let ticket_booth_1 = TicketSeller::new_booth("Ticket Booth 1");
-    ticket_booth_1.sell_ticket(&mut c1);
+    match ticket_booth_1.sell_ticket(&mut c1) {
+        Ok(res) => println!("{res}"),
+        Err(err) => println!("Error selling ticket: {err}"),
+    };
     println!("{}", c1.get_string());
 }

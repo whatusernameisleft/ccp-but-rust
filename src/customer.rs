@@ -44,44 +44,34 @@ impl Customer {
         }
     }
 
-    pub fn enter_building(&mut self) {
+    pub fn enter_building(&mut self) -> Result<String, String> {
         match self.status {
             Status::Outside => {
-                println!("{self} has entered the building.");
                 self.status = Status::Inside;
+                Ok(format!("{self} has entered the building."))
             }
             Status::Inside | Status::Passenger => {
-                panic!("{self} is already inside so they can't enter the building again.")
+                Err(format!("{self} is already in the building."))
             }
         }
     }
 
-    pub fn buy_ticket(&mut self, ticket: Ticket, seller: &TicketSeller) {
-        match self.status {
-            Status::Inside => {
-                println!("{self} has bought a {ticket} ticket from {seller}.");
-                self.status = Status::Passenger;
-                self.ticket = Some(ticket);
-            }
-            Status::Outside => {
-                panic!("{self} is not in the building so they can't buy a ticket.")
-            }
-            Status::Passenger => {
-                panic!("{self} already has a ticket so they can't buy another ticket.")
-            }
-        }
+    pub fn buy_ticket(&mut self, ticket: Ticket, seller: &TicketSeller) -> Option<String> {
+        self.ticket = Some(ticket);
+        Some(format!(
+            "{self} has bought a {} ticket from {seller}.",
+            self.ticket.as_ref()?
+        ))
     }
 
     pub fn get_string(&self) -> String {
         match self.status {
             Status::Outside => format!("{self} is waiting outside of the building."),
             Status::Inside => format!("{self} is inside of the building."),
-            Status::Passenger => format!(
-                "{self} is has a ticket for {}.",
-                self.ticket
-                    .as_ref()
-                    .unwrap_or_else(|| panic!("{self} has no ticket somehow."))
-            ),
+            Status::Passenger => match self.ticket {
+                Some(ref ticket) => format!("{self} has a {ticket} ticket."),
+                None => format!("Missing ticket error: {self} somehow doesn't have a ticket."),
+            },
         }
     }
 }

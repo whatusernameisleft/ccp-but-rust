@@ -1,4 +1,4 @@
-use crate::customer::Customer;
+use crate::customer::{Customer, Status};
 use std::fmt;
 
 pub struct Booth {
@@ -34,14 +34,24 @@ impl TicketSeller {
         })
     }
 
-    pub fn new_machine(name: &str) -> Self {
+    pub fn new_machine(name: &'static str) -> Self {
         Self::Machine(Machine {
             name: String::from(name),
         })
     }
 
-    pub fn sell_ticket(&self, customer: &mut Customer) {
-        let ticket: super::Ticket = rand::random();
-        customer.buy_ticket(ticket, self);
+    pub fn sell_ticket(&self, customer: &mut Customer) -> Result<String, String> {
+        match customer.status {
+            Status::Outside => Err(format!("{customer} is not in the building.")),
+            Status::Inside => {
+                let ticket: super::Ticket = rand::random();
+                let res = customer
+                    .buy_ticket(ticket, self)
+                    .ok_or(format!("{customer} failed to buy a ticket."))?;
+                customer.status = Status::Passenger;
+                Ok(res)
+            }
+            Status::Passenger => Err(format!("{customer} already has a ticket.")),
+        }
     }
 }
